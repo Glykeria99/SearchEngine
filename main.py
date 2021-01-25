@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import urllib.parse
 import os
+import csv
 
 
 def myCrawler(url, max_pages, save, threads):
@@ -45,7 +46,36 @@ def myCrawler(url, max_pages, save, threads):
         file.write(text)                                 # and saves the text.
         page_num = page_num + 1  # increase the number of pages we have visited.
 
-os.mkdir(".\\files")
+
+def myInvertedIndexer():
+    indexer = []  # this is the main indexer list
+    columns = ['word', 'document', 'frequency']
+    # getting each word from each file
+    # creating a csv file to save the data
+    with open('.\\indexer\\indexer.csv', 'w', newline='', encoding='utf-8') as csv_file:
+
+        for file in os.listdir(".\\files\\"):  # for each txt file created by crawler
+            if not file.endswith(".txt"):
+                continue
+                # reading each line
+            with open(".\\files\\" + file, 'r',  encoding='utf-8') as f:
+                for line in f:
+                    # reading each word
+                    for word in line.split():
+
+                        # check if the word already exists in this document
+                        with open('.\\indexer\\indexer.csv', 'r', newline='', encoding='utf-8') as csv_file2:
+                            for line2 in csv_file2:
+                                if word in line2.split():
+                                    # saving the word in the csv file
+                                    writer = csv.writer(csv_file, columns)
+                                    # writer.writerow([word, file, line2['frequency']+1])
+                            # saving the word in the csv file
+                            writer = csv.writer(csv_file, columns)
+                            writer.writerow([word, file, 1])
+
+
+# os.mkdir(".\\files")
 url = "auth.gr"  # url
 pages = 10  # number of pages to iterate
 save = 0  # keep last data or delete it (1 = keep, 0 = delete)
@@ -53,3 +83,4 @@ threads = 8  # number of threads (not using it)
 if not url.startswith("http"):
     url = "http://" + url
 myCrawler(url, pages, save, threads)
+myInvertedIndexer()
