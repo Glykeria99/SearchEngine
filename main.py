@@ -64,7 +64,7 @@ def myInvertedIndexer():
                 for line in f:
                     # reading each word
                     for word in line.split():
-                        punc = '''!()|-[]{};:'", <>./?@#$%^&*_~'''
+                        punc = '''!()|-[]{};:'", <>./?@#$%^&*_~©®™¨¨«»'''
                         if word in punc:
                             continue
                         flag = 0
@@ -78,6 +78,13 @@ def myInvertedIndexer():
                             continue
         print(numpy.array(list).tolist())
         print(len(list))
+        columns = ['word', 'document', 'frequency']
+        # creating a csv file to save the data
+    with open('.\\indexer\\indexer.csv', 'w', newline='', encoding='utf-8') as csv_file:
+        for array in list:
+            writer = csv.writer(csv_file, columns)
+            writer.writerow([array[0], array[1], array[2]])
+
 
 
 # os.mkdir(".\\files")
