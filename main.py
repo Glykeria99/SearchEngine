@@ -64,9 +64,12 @@ def myInvertedIndexer():
                 for line in f:
                     # reading each word
                     for word in line.split():
+                        for index, array in enumerate(list):
+                            if word in array[0]:
+                                list[index][2] = int(list[index][2]) + 1
+                                continue
                         list.append(numpy.array([str(word), str(file), 1]))
         print(numpy.array(list).tolist())
-
 
 # os.mkdir(".\\files")
 url = "auth.gr"  # url
