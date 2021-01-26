@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import urllib.parse
 import os
 import csv
+import numpy
 
 
 def myCrawler(url, max_pages, save, threads):
@@ -48,7 +49,8 @@ def myCrawler(url, max_pages, save, threads):
 
 
 def myInvertedIndexer():
-    indexer = []  # this is the main indexer list
+    list = []
+    num = 0
     columns = ['word', 'document', 'frequency']
     # getting each word from each file
     # creating a csv file to save the data
@@ -62,22 +64,13 @@ def myInvertedIndexer():
                 for line in f:
                     # reading each word
                     for word in line.split():
-
-                        # check if the word already exists in this document
-                        with open('.\\indexer\\indexer.csv', 'r', newline='', encoding='utf-8') as csv_file2:
-                            for line2 in csv_file2:
-                                if word in line2.split():
-                                    # saving the word in the csv file
-                                    writer = csv.writer(csv_file, columns)
-                                    # writer.writerow([word, file, line2['frequency']+1])
-                            # saving the word in the csv file
-                            writer = csv.writer(csv_file, columns)
-                            writer.writerow([word, file, 1])
+                        list.append(numpy.array([str(word), str(file), 1]))
+        print(numpy.array(list).tolist())
 
 
 # os.mkdir(".\\files")
 url = "auth.gr"  # url
-pages = 10  # number of pages to iterate
+pages = 5  # number of pages to iterate
 save = 0  # keep last data or delete it (1 = keep, 0 = delete)
 threads = 8  # number of threads (not using it)
 if not url.startswith("http"):
