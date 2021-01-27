@@ -4,7 +4,6 @@ import urllib.parse
 import os
 import csv
 import numpy
-import pandas as pd
 
 
 def myCrawler(url, max_pages, save, threads):
@@ -65,7 +64,7 @@ def myInvertedIndexer():
                 for line in f:
                     # reading each word
                     for word in line.split():
-                        punc = '''!()|-[]{};:'", <>./?@#$%^&*_~©®™¨¨«»–'''
+                        punc = '''!()|-[]{};:'", <>./?@#$%^&*_~©®™¨¨«»'''
                         if word in punc:
                             continue
                         flag = 0
@@ -77,23 +76,33 @@ def myInvertedIndexer():
                             list.append(numpy.array([str(word), str(file), 1]))
                         else:
                             continue
-        print(numpy.array(list).tolist())
-        print(len(list))
-        # creating a csv file to save the data
+        # sorting the csv in alphabetic order by the 'word' value
+        list.sort(key=get_word)
+        # calculating the number of documents that each word appears in.
+        count = []
+        count_index = 0
+        frequency = 1
+        for array in list:
+            if array[0] not in count:
+                frequency = 1
+                count_index = count_index + 1
+                count.append([(array[0], frequency)])
+            else:
+                frequency = frequency + 1
+                count[count_index] = ([array[0], frequency])
+        print(count)
+        columns = ['word', 'document', 'frequency']
+    # creating a csv file to save the data
     with open('.\\indexer\\indexer.csv', 'w', newline='', encoding='utf-8') as csv_file:
         fieldnames = ['word', 'document', 'frequency']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         for array in list:
-            #writer.writerow([array[0], array[1], array[2]])
             writer.writerow({'word': array[0], 'document': array[1], 'frequency': array[2]})
 
-    #sort the words in the csv
-    df = pd.read_csv('.\\indexer\\indexer.csv')
-    sorted_df = df.sort_values(by=['word'], ascending=False)
-    sorted_df.to_csv('.\\indexer\\sortedIndex.csv', index=False)
 
-
+def get_word(array):
+    return array[0]
 
 # os.mkdir(".\\files")
 url = "auth.gr"  # url
@@ -102,5 +111,5 @@ save = 0  # keep last data or delete it (1 = keep, 0 = delete)
 threads = 8  # number of threads (not using it)
 if not url.startswith("http"):
     url = "http://" + url
-myCrawler(url, pages, save, threads)
+# myCrawler(url, pages, save, threads)
 myInvertedIndexer()
