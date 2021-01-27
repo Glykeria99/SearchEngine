@@ -4,6 +4,7 @@ import urllib.parse
 import os
 import csv
 import numpy
+import pandas as pd
 
 
 def myCrawler(url, max_pages, save, threads):
@@ -64,7 +65,7 @@ def myInvertedIndexer():
                 for line in f:
                     # reading each word
                     for word in line.split():
-                        punc = '''!()|-[]{};:'", <>./?@#$%^&*_~©®™¨¨«»'''
+                        punc = '''!()|-[]{};:'", <>./?@#$%^&*_~©®™¨¨«»–'''
                         if word in punc:
                             continue
                         flag = 0
@@ -78,12 +79,19 @@ def myInvertedIndexer():
                             continue
         print(numpy.array(list).tolist())
         print(len(list))
-        columns = ['word', 'document', 'frequency']
         # creating a csv file to save the data
     with open('.\\indexer\\indexer.csv', 'w', newline='', encoding='utf-8') as csv_file:
+        fieldnames = ['word', 'document', 'frequency']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
         for array in list:
-            writer = csv.writer(csv_file, columns)
-            writer.writerow([array[0], array[1], array[2]])
+            #writer.writerow([array[0], array[1], array[2]])
+            writer.writerow({'word': array[0], 'document': array[1], 'frequency': array[2]})
+
+    #sort the words in the csv
+    df = pd.read_csv('.\\indexer\\indexer.csv')
+    sorted_df = df.sort_values(by=['word'], ascending=False)
+    sorted_df.to_csv('.\\indexer\\sortedIndex.csv', index=False)
 
 
 
