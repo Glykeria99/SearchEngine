@@ -76,16 +76,33 @@ def myInvertedIndexer():
                             list.append(numpy.array([str(word), str(file), 1]))
                         else:
                             continue
-        print(numpy.array(list).tolist())
-        print(len(list))
-        columns = ['word', 'document', 'frequency']
-        # creating a csv file to save the data
-    with open('.\\indexer\\indexer.csv', 'w', newline='', encoding='utf-8') as csv_file:
+        # sorting the csv in alphabetic order by the 'word' value
+        list.sort(key=get_word)
+        # calculating the number of documents that each word appears in.
+        count = []
+        count_index = 0
+        frequency = 1
         for array in list:
-            writer = csv.writer(csv_file, columns)
-            writer.writerow([array[0], array[1], array[2]])
+            if array[0] not in count:
+                frequency = 1
+                count_index = count_index + 1
+                count.append([(array[0], frequency)])
+            else:
+                frequency = frequency + 1
+                count[count_index] = ([array[0], frequency])
+        print(count)
+        columns = ['word', 'document', 'frequency']
+    # creating a csv file to save the data
+    with open('.\\indexer\\indexer.csv', 'w', newline='', encoding='utf-8') as csv_file:
+        fieldnames = ['word', 'document', 'frequency']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        for array in list:
+            writer.writerow({'word': array[0], 'document': array[1], 'frequency': array[2]})
 
 
+def get_word(array):
+    return array[0]
 
 # os.mkdir(".\\files")
 url = "auth.gr"  # url
@@ -94,5 +111,5 @@ save = 0  # keep last data or delete it (1 = keep, 0 = delete)
 threads = 8  # number of threads (not using it)
 if not url.startswith("http"):
     url = "http://" + url
-myCrawler(url, pages, save, threads)
+# myCrawler(url, pages, save, threads)
 myInvertedIndexer()
