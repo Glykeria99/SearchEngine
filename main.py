@@ -76,39 +76,15 @@ def myInvertedIndexer():
                             list.append(numpy.array([str(word), str(file), 1]))
                         else:
                             continue
-        # sorting the csv in alphabetic order by the 'word' value
-        list.sort(key=get_word)
-        # print(numpy.array(list).tolist())
-        # calculating the number of documents that each word appears in.
-        count = []
-        frequency = 0
-        previous_word = list[0][0]
-        print(previous_word)
-        for array in list:
-            current_word = array[0]
-            if current_word == previous_word:
-                frequency = frequency + 1
-                previous_word = current_word
-            else:
-                count.append([previous_word, frequency])
-                frequency = 1
-                previous_word = current_word
-    # creating a csv file to save the data
+        print(numpy.array(list).tolist())
+        print(len(list))
+        columns = ['word', 'document', 'frequency']
+        # creating a csv file to save the data
     with open('.\\indexer\\indexer.csv', 'w', newline='', encoding='utf-8') as csv_file:
-        fieldnames = ['word', 'documents', 'data']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-        temp = []
-        for data in count:
-            temp.clear()
-            for array in list:
-                if array[0] == data[0]:
-                    temp.append([str(array[1]), int(array[2])])
-            writer.writerow({'word': data[0], 'documents': data[1], 'data': temp})
+        for array in list:
+            writer = csv.writer(csv_file, columns)
+            writer.writerow([array[0], array[1], array[2]])
 
-
-def get_word(array):
-    return array[0]
 
 
 # os.mkdir(".\\files")
@@ -118,5 +94,5 @@ save = 0  # keep last data or delete it (1 = keep, 0 = delete)
 threads = 8  # number of threads (not using it)
 if not url.startswith("http"):
     url = "http://" + url
-# myCrawler(url, pages, save, threads)
+myCrawler(url, pages, save, threads)
 myInvertedIndexer()
