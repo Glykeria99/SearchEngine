@@ -78,31 +78,38 @@ def myInvertedIndexer():
                             continue
         # sorting the csv in alphabetic order by the 'word' value
         list.sort(key=get_word)
+        # print(numpy.array(list).tolist())
         # calculating the number of documents that each word appears in.
         count = []
-        count_index = 0
-        frequency = 1
+        frequency = 0
+        previous_word = list[0][0]
+        print(previous_word)
         for array in list:
-            if array[0] not in count:
-                frequency = 1
-                count_index = count_index + 1
-                count.append([(array[0], frequency)])
-            else:
+            current_word = array[0]
+            if current_word == previous_word:
                 frequency = frequency + 1
-                count[count_index] = ([array[0], frequency])
-        print(count)
-        columns = ['word', 'document', 'frequency']
+                previous_word = current_word
+            else:
+                count.append([previous_word, frequency])
+                frequency = 1
+                previous_word = current_word
     # creating a csv file to save the data
     with open('.\\indexer\\indexer.csv', 'w', newline='', encoding='utf-8') as csv_file:
-        fieldnames = ['word', 'document', 'frequency']
+        fieldnames = ['word', 'documents', 'data']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
-        for array in list:
-            writer.writerow({'word': array[0], 'document': array[1], 'frequency': array[2]})
+        temp = []
+        for data in count:
+            temp.clear()
+            for array in list:
+                if array[0] == data[0]:
+                    temp.append([str(array[1]), int(array[2])])
+            writer.writerow({'word': data[0], 'documents': data[1], 'data': temp})
 
 
 def get_word(array):
     return array[0]
+
 
 # os.mkdir(".\\files")
 url = "auth.gr"  # url
