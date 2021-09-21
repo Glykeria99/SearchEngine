@@ -42,23 +42,6 @@ class queryProcessor:
 
 
 
-
-
-
-        """
-        for row in indexer:
-            print("row 0 is: ", row[0])
-            temp = row[2]
-            if word == row[0]:
-                for d in temp:
-                    if doc == d[0]:
-                        print("doc is: ", doc, "and in index i found same: ", d[0])
-                        return d[1]
-                        """
-
-
-
-
     def calculate_tf_idf(self,N,count,num_of_words_in_docs,indexer_copy):
         idf = self.calculate_idf(count, N)
         tfidf_documents = []
