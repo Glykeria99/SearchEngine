@@ -1,5 +1,6 @@
 import indexer
 import crawler
+import queryprocessor
 
 # os.mkdir(".\\files")
 url = "auth.gr"  # url
@@ -10,4 +11,9 @@ if not url.startswith("http"):
     url = "http://" + url
 MyCrawler = crawler.Crawler
 MyCrawler.myCrawler(url, pages, save, threads)
-indexer = indexer.myInvertedIndexer()
+
+#indexer = indexer.myInvertedIndexer()
+
+df_count, num_of_words_in_docs, indexer_copy = indexer.myInvertedIndexer()
+query = queryprocessor.queryProcessor()
+query.calculate_tf_idf(pages, df_count, num_of_words_in_docs, indexer_copy)
