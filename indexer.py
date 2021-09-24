@@ -65,9 +65,9 @@ def myInvertedIndexer():
             for array in list:
                 if array[0] == data[0]:
                     temp.append([str(array[1]), int(array[2])])
-            indexer_copy.append([data[0],data[1],temp])
+            indexer_copy.append([data[0],data[1],temp]) #Icorrectly add the temp (always adds the last temp data for some reason)
             writer.writerow({'word': data[0], 'documents': data[1], 'data': temp})
-
+    #print("dict: ",indexer_copy)
 
     print("counter for words in each doc: ", num_of_words_in_doc)
     return count, num_of_words_in_doc, indexer_copy
@@ -75,3 +75,4 @@ def myInvertedIndexer():
 
 def get_word(array):
     return array[0]
+

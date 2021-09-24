@@ -12,8 +12,8 @@ if not url.startswith("http"):
 MyCrawler = crawler.Crawler
 MyCrawler.myCrawler(url, pages, save, threads)
 
-#indexer = indexer.myInvertedIndexer()
-
 df_count, num_of_words_in_docs, indexer_copy = indexer.myInvertedIndexer()
 query = queryprocessor.queryProcessor()
-query.calculate_tf_idf(pages, df_count, num_of_words_in_docs, indexer_copy)
+query.calculate_cosine_sim("Greek university", pages, df_count, num_of_words_in_docs, indexer_copy)
+
+
