@@ -24,16 +24,15 @@ class Crawler(threading.Thread):
             self.url_lock.acquire()
             link = self.links_to_crawl.get()
             self.url_lock.release()
-
             # if the link is None the queue is exhausted or the threads are yet
             # process the links.
 
             if link is None:
-                break
+                continue
 
             # if The link is already visited we break the execution.
             if link in self.visited:
-                break
+                continue
 
             try:
                 # This method constructs a full "absolute" URL by combining the
@@ -46,6 +45,7 @@ class Crawler(threading.Thread):
 
                 res = requests.get(link)
                 html_page = res.content
+                #print(len(self.visited))
                 if len(self.visited) >= self.max_pages:
                     break
                 # this returns the html representation of the webpage
@@ -75,8 +75,6 @@ class Crawler(threading.Thread):
                 # creates a txt file with the name of the page
                 file = open(".\\files\\" + title + ".txt", "w", encoding='utf-8')
                 file.write(text)  # and saves the text.
-                if len(self.visited) > self.max_pages:
-                    break
             finally:
                 self.links_to_crawl.task_done()
 

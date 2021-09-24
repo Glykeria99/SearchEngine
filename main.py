@@ -24,6 +24,7 @@ if save == 0:  # if the user requested to restart the crawler and delete all the
         os.remove(os.path.join(".\\files\\", f))
 if not url.startswith("http"):
     url = "http://" + url
+
 for i in range(int(num_of_threads)):
     MyCrawler = crawler.Crawler(url, links_to_crawl, visited, pages, save, url_lock)
     MyCrawler.start()
