@@ -37,5 +37,4 @@ print(f"Total Number of pages visited are {len(visited)} using {num_of_threads} 
 
 df_count, num_of_words_in_docs, indexer_copy = indexer.myInvertedIndexer()
 query = queryprocessor.queryProcessor()
-query.calculate_cosine_sim("Greek university", pages, df_count, num_of_words_in_docs, indexer_copy)
-
+query.process_query("νησίδες", pages, df_count, num_of_words_in_docs, indexer_copy)

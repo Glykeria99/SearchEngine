@@ -27,7 +27,18 @@ class queryProcessor:
         for token in count:
             idf_values.append([token[0], math.log(N/token[1])])
 
-        print("len of idf_values:", len(idf_values))
+        #print("len of idf_values:", len(idf_values))
+        return idf_values
+
+    def calculate_query_idf(self,query_count,count,N):
+        idf_values = [] #key is each word and the value is the idf value
+        for query in query_count:
+            for token in count:
+                if token[0] == query[0]:
+                    idf_values.append([token[0], math.log(N/token[1]+query[1])])
+
+
+        print("query idf_values:",idf_values)
         return idf_values
 
     def calculate_count_of_word_in_doc(self,word,doc,indexer_copy):  #finds the count of times a word appears in a certain doc
@@ -41,8 +52,7 @@ class queryProcessor:
         return 0
 
 
-
-    def calculate_cosine_sim(self,query,N,count,num_of_words_in_docs,indexer_copy):
+    def process_query(self,query,N,count,num_of_words_in_docs,indexer_copy):
 
         #calculate TF-IDF
         idf = self.calculate_idf(count, N)
@@ -53,15 +63,55 @@ class queryProcessor:
                 tf = self.calculate_count_of_word_in_doc(word[0],doc[0],indexer_copy)/doc[1]
                 doc_tfidf.append([word[0],doc[0], tf * word[1]])
             tfidf_documents.append(doc_tfidf)
-        print("tfidf_documents: ",tfidf_documents)
+        #print("tfidf_documents: ",tfidf_documents)
 
         #calculate cosine similarity
-        #TODO - Not working
-        D = numpy.zeros((N, count))
-        for i in tfidf_documents:
-            ind = count.index(i[1])
-            D[i[0]][ind] = tfidf_documents[i]
 
+        #turn the query into list of words and number of appearance
+        query = query.lower()
+        query_list = list(query.split(" "))
+        query_list.sort(key=get_word)
+        query_count = []
+        frequency = 0
+        previous_word = query_list[0]
+        for word in query_list:
+            current_word = word
+            if current_word == previous_word:
+                frequency = frequency + 1
+                previous_word = current_word
+            else:
+                query_count.append([previous_word, frequency])
+                frequency = 1
+                previous_word = current_word
+        query_count.append([previous_word, frequency])
+
+        print("test: ",query_count)
+
+        #vectorize the query by calculating tf-idf
+        query_idf = self.calculate_query_idf(query_count,count,N)
+        query_tfidf = []
+        i = 0
+        for word in query_idf:
+            query_tf = query_count[i][1]/len(query_list)
+            query_tfidf.append([word[0],"query", query_tf * word[1]])
+            i = i+1
+        print("tf-idf of query:", query_tfidf)
+
+    """  
+    def cosine_similarity(self,vector1, vector2):
+    dot_product = sum(p*q for p,q in zip(vector1, vector2))
+    magnitude = math.sqrt(sum([val**2 for val in vector1])) * 
+    math.sqrt(sum([val**2 for val in vector2]))
+    if not magnitude:
+        return 0
+    return dot_product/magnitude
+"""
+
+
+
+
+def get_word(array):
+    return array[0]
 
 
 
