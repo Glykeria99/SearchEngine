@@ -53,7 +53,7 @@ class queryProcessor:
                 tf = self.calculate_count_of_word_in_doc(word[0],doc[0],indexer_copy)/doc[1]
                 doc_tfidf.append([word[0],doc[0], tf * word[1]])
             tfidf_documents.append(doc_tfidf)
-        print("tfidf_documents: ",tfidf_documents)
+        #print("tfidf_documents: ",tfidf_documents)
 
         #calculate cosine similarity
         #TODO - Not working
