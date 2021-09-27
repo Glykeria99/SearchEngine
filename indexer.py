@@ -31,6 +31,7 @@ def myInvertedIndexer():
                                 list[index][2] = int(list[index][2]) + 1
                                 flag = 1
                         if flag == 0:
+                            word = word.lower()  # make all words lowercase to avoid same words appearing in the indexer multiple times
                             list.append(numpy.array([str(word), str(file), 1]))
                         else:
                             continue
@@ -53,13 +54,10 @@ def myInvertedIndexer():
                 frequency = 1
                 previous_word = current_word
     print("all different words: ", len(count))
-    #print(count)
     # creating a csv file to save the data
     indexer_copy = []
     with open('.\\indexer\\indexer.csv', 'w', newline='', encoding='utf-8') as csv_file:
-        fieldnames = ['word', 'documents', 'data']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
+        writer = csv.writer(csv_file)
         temp = []
         for data in count:
             temp.clear()
@@ -68,8 +66,13 @@ def myInvertedIndexer():
                     temp.append([str(array[1]), int(array[2])])
             temp2 = copy.deepcopy(temp)
             indexer_copy.append([data[0], data[1], temp2]) # Icorrectly add the temp (always adds the last temp data for some reason)
-            # writer.writerow({'word': data[0], 'documents': data[1], 'data': temp})
-    print(*indexer_copy, sep='\n')
+            row = []
+            row.append(data[0])
+            row.append(data[1])
+            for i in range(len(temp)//2):
+                row.append(temp[i][0])
+                row.append((temp[i][1]))
+            writer.writerow(row)
 
     print("counter for words in each doc: ", num_of_words_in_doc)
     return count, num_of_words_in_doc, indexer_copy
