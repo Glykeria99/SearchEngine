@@ -67,8 +67,6 @@ class queryProcessor:
             tfidf_documents.append(doc_tfidf)
         #print("tfidf_documents: ",tfidf_documents)
 
-        #calculate cosine similarity
-
         #turn the query into list of words and number of appearance
         query = query.lower()
         query_list = list(query.split(" "))
@@ -97,26 +95,27 @@ class queryProcessor:
             i = i+1
         print("tf-idf of query:", query_tfidf)
 
-        cosine_sim = self.cosine_similarity(query_tfidf,tfidf_documents,N)
+        cosine_sim = self.cosine_similarity(query_tfidf,tfidf_documents,N,num_of_words_in_docs)
+        cosine_sim.sort(key=lambda x: x[1])
+        print("final results: ",cosine_sim)
+        return cosine_sim
 
 
-    def cosine_similarity(self, query_vector,doc_vectors,N):
+
+
+    def cosine_similarity(self, query_vector,doc_vectors,N,num_of_words_in_docs):
 
         v1=0 #query vector
         result=[]
-
         for i in range(len(query_vector)):
             v1= v1 + query_vector[i][2]
 
-        print("v1: ",v1)
         for i in range(0,N): #find scoring for each document
             v2 = 0
             for word in doc_vectors[i]:
                 v2 = v2 + word[2]
+            result.append([num_of_words_in_docs[i][0],dot(v1, v2)/(norm(v1)*norm(v2))])
 
-            result.append(dot(v1, v2)/(norm(v1)*norm(v2)))
-
-        print("cosine: ",result)
         return result
 
 
