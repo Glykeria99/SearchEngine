@@ -2,6 +2,8 @@ import os
 import csv
 import numpy
 import math
+from numpy import dot
+from numpy.linalg import norm
 
 
 """
@@ -9,10 +11,12 @@ t — term (word)
 d — document (set of words)
 N — count of corpus
 corpus — the total document set
+
 DF = count of t in documents
 TF= count of t in d / number of words in d
 IDF(t) = log(N/DF)
 TF-IDF = tf*idf
+
 """
 
 class queryProcessor:
@@ -83,8 +87,6 @@ class queryProcessor:
                 previous_word = current_word
         query_count.append([previous_word, frequency])
 
-        print("test: ",query_count)
-
         #vectorize the query by calculating tf-idf
         query_idf = self.calculate_query_idf(query_count,count,N)
         query_tfidf = []
@@ -95,19 +97,36 @@ class queryProcessor:
             i = i+1
         print("tf-idf of query:", query_tfidf)
 
-    """  
-    def cosine_similarity(self,vector1, vector2):
-    dot_product = sum(p*q for p,q in zip(vector1, vector2))
-    magnitude = math.sqrt(sum([val**2 for val in vector1])) * 
-    math.sqrt(sum([val**2 for val in vector2]))
-    if not magnitude:
-        return 0
-    return dot_product/magnitude
-"""
+        cosine_sim = self.cosine_similarity(query_tfidf,tfidf_documents,N)
 
+
+    def cosine_similarity(self, query_vector,doc_vectors,N):
+
+        v1=0 #query vector
+        result=[]
+
+        for i in range(len(query_vector)):
+            v1= v1 + query_vector[i][2]
+
+        print("v1: ",v1)
+        for i in range(0,N): #find scoring for each document
+            v2 = 0
+            for word in doc_vectors[i]:
+                v2 = v2 + word[2]
+
+            result.append(dot(v1, v2)/(norm(v1)*norm(v2)))
+
+        print("cosine: ",result)
+        return result
+
+
+def column(matrix, i):
+    return [row[i] for row in matrix]
 
 
 
 def get_word(array):
     return array[0]
+
+
 
