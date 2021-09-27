@@ -2,9 +2,45 @@ from flask import Flask, render_template, redirect, url_for, flash, session
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from flask_bootstrap import Bootstrap
+import indexer
+import crawler
+import queue
+import threading
+import os
 import queryprocessor
 
 app = Flask(__name__)
+
+
+# os.mkdir(".\\files")
+url = "https://www.auth.gr/" # url
+links_to_crawl = queue.Queue()
+url_lock = threading.Lock()
+links_to_crawl.put(url)
+crawler_threads = []
+
+
+pages = int(input("Give the number of pages to crawl:"))  # number of pages to iterate
+save = 0  # keep last data or delete it (1 = keep, 0 = delete)
+num_of_threads = int(input("Give the number of threads:"))# number of threads
+visited = set()
+if save == 0:  # if the user requested to restart the crawler and delete all the previous data
+    for f in os.listdir(".\\files\\"):  # delete all the txt files
+        if not f.endswith(".txt"):
+            continue
+        os.remove(os.path.join(".\\files\\", f))
+if not url.startswith("http"):
+    url = "http://" + url
+
+for i in range(int(num_of_threads)):
+    MyCrawler = crawler.Crawler(url, links_to_crawl, visited, pages, save, url_lock)
+    MyCrawler.start()
+    crawler_threads.append(MyCrawler)
+for crawler in crawler_threads:
+    crawler.join()
+print(f"Total Number of pages visited are {len(visited)} using {num_of_threads} threads")
+
+df_count, num_of_words_in_docs, indexer_copy = indexer.myInvertedIndexer()
 
 
 import os
@@ -29,11 +65,10 @@ def search():
 
 @app.route("/results/<query>", methods= ["GET", "POST"])
 def results(query):
+    Q = queryprocessor.queryProcessor()
+    query_results = Q.process_query(str(query), pages, df_count, num_of_words_in_docs, indexer_copy)
+    # query results contains a list of each document name and its score sorted
     form = SearchForm()
-    Results = []
-    Results.append("selida 1")
-    Results.append("selida 2")
-    Results.append("selida 3")
 
     #query = queryprocessor.queryProcessor()
     #query.calculate_cosine_sim("Greek university", self.pages, df_count, num_of_words_in_docs, indexer_copy)
@@ -41,5 +76,5 @@ def results(query):
     if form.is_submitted():
         flash(f'Results for {form.query.data}')
         return redirect(url_for('results', query = form.query.data))
-    return render_template('results.html', form=form, len = len(Results), Results=Results, query=query)
+    return render_template('results.html', form=form, len = len(query_results), Results=query_results, query=query)
 

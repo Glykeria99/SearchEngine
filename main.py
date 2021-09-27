@@ -1,4 +1,4 @@
-import indexer
+"""import indexer
 import crawler
 import queue
 import threading
@@ -38,4 +38,6 @@ print(f"Total Number of pages visited are {len(visited)} using {num_of_threads} 
 df_count, num_of_words_in_docs, indexer_copy = indexer.myInvertedIndexer()
 query = queryprocessor.queryProcessor()
 query_results = query.process_query("νησίδες", pages, df_count, num_of_words_in_docs, indexer_copy)
-#query results contains a list of each document name and its score sorted
+query results contains a list of each document name and its score sorted
+
+"""""
