@@ -23,6 +23,17 @@ h1 {
   white-space: nowrap;
 }
 
+h4 {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+  font-size: 20px;
+  color: #1a0013;
+  white-space: nowrap;
+  border: 1px solid grey;
+  background-color: #f1f1f1
+}
+
 .header {
   padding: 30px;
   font-size: 20px;
@@ -68,3 +79,4 @@ form.engine::after {
   clear: both;
   display: table;
 }
+
