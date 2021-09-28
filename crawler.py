@@ -11,13 +11,12 @@ class Crawler(threading.Thread):
     # initializing the number of pages to be crawled, if the data should be saved,
     # the starting url, the links to crawl, a list that keeps track of
     # the visited urls and the url lock
-    def __init__(self, url, links_to_crawl, visited, max_pages, save, url_lock):
+    def __init__(self, url, links_list, visited, max_pages, url_lock):
         threading.Thread.__init__(self)
         print(f"Web Crawler worker {threading.current_thread()} has Started")
         self.max_pages = max_pages
-        self.save = save
         self.url = url
-        self.links_to_crawl = links_to_crawl
+        self.links_list = links_list
         self.visited = visited
         self.url_lock = url_lock
 
@@ -27,7 +26,7 @@ class Crawler(threading.Thread):
         while True:
             # we create a global lock on our queue of links so that no two threads can access the queue at same time
             self.url_lock.acquire()
-            link = self.links_to_crawl.get()
+            link = self.links_list.get()
             self.url_lock.release()
 
             # if the link is None the queue is exhausted or the threads are yet, process the links
@@ -55,7 +54,7 @@ class Crawler(threading.Thread):
                 for a_tag in soup.find_all('a'):
                     # checking if the link has been visited
                     if (a_tag.get("href") not in self.visited):
-                        self.links_to_crawl.put(a_tag.get("href"))
+                        self.links_list.put(a_tag.get("href"))
 
                 print(f"Adding {link} to the crawled list")
                 self.visited.add(link)
@@ -75,4 +74,4 @@ class Crawler(threading.Thread):
                 file.write(text)
             # ending the crawling task
             finally:
-                self.links_to_crawl.task_done()
+                self.links_list.task_done()

@@ -41,7 +41,7 @@ if not url.startswith("http"):
 #  for each of the number of threads we call a crawler giving the corresponding data so
 #  every next crawler, can find data without crawling the same pages.
 for i in range(int(num_of_threads)):
-    MyCrawler = crawler.Crawler(url, links_list, visited, pages, save, url_lock)
+    MyCrawler = crawler.Crawler(url, links_list, visited, pages, url_lock)
     MyCrawler.start()  # start the crawler
     crawler_threads.append(MyCrawler)  # append the crawler to the list wih the threads
 for crawler in crawler_threads:
@@ -77,7 +77,7 @@ def results(query):
     Q = queryprocessor.queryProcessor()  # process the query to get the top k results
     query_results = Q.process_query(str(query), pages, df_count, num_of_words_in_docs, indexer_copy)
     # query results contains a list of each document name and its score sorted
-    websites = column(query_results,0)
+    websites = column(query_results, 0)
     new_links = []
     for sites in websites:
         new_links.append(sites.replace('.txt', '').replace('www.', '').replace('https','https://www.'))

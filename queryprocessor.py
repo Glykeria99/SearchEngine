@@ -1,5 +1,7 @@
 import os
 import csv
+from decimal import Decimal
+
 import numpy
 import math
 from numpy import dot
@@ -52,14 +54,14 @@ class queryProcessor:
                 doc_tfidf.append([word[0],doc[0], tf * word[1]]) #TF-IDF Formula
             tfidf_documents.append(doc_tfidf)
 
-        #turn the query into list of words and number of appearance
-        query = query.lower() #make lowercase
+        # turn the query into list of words and number of appearance
+        query = query.lower()  # make lowercase
         query_list = list(query.split(" "))
-        query_list.sort(key=get_word) #sort
+        query_list.sort(key=get_word)  # sort
         query_count = []
         frequency = 0
         previous_word = query_list[0]
-        for word in query_list: #for all words in query, find frequency of appearance inside the query
+        for word in query_list:  # for all words in query, find frequency of appearance inside the query
             current_word = word
             if current_word == previous_word:
                 frequency = frequency + 1
@@ -70,35 +72,38 @@ class queryProcessor:
                 previous_word = current_word
         query_count.append([previous_word, frequency])
 
-        #calculate tf-idf for the query
+        # calculate tf-idf for the query
         query_idf = self.calculate_query_idf(query_count,count,N)
         query_tfidf = []
         i = 0
         for word in query_idf:
-            query_tf = query_count[i][1]/len(query_list) #TF Formula
-            query_tfidf.append([word[0],"query", query_tf * word[1]]) #TF-IDF Formula
+            query_tf = query_count[i][1]/len(query_list)  # TF Formula
+            query_tfidf.append([word[0],"query", query_tf * word[1]])  # TF-IDF Formula
             i = i+1
 
         cosine_sim = self.cosine_similarity(query_tfidf,tfidf_documents,N,num_of_words_in_docs) #find cosine similarity
         cosine_sim.sort(key=lambda x: x[1]) #sort the results by the cosine similarity score
-        print("final results: ",cosine_sim)
+        #print("final results: ",cosine_sim)
         return cosine_sim
 
-    #function that calculates the cosine similarity
+    # function that calculates the cosine similarity
     def cosine_similarity(self, query_vector,doc_vectors,N,num_of_words_in_docs):
 
-        v1 = 0 #query vector
+        v1 = 0 # query vector
         result=[]
         for i in range(len(query_vector)):
-            v1= v1 + query_vector[i][2] #sum of individual vectors
+            v1 = v1 + query_vector[i][2]  # sum of individual vectors
         cosine = 0
-        for i in range(0,N): #find scoring for each document
+        for i in range(0,N):  # find scoring for each document
             v2 = 0
             for word in doc_vectors[i]:
-                v2 = v2 + word[2] #sum of individual vectors
-            cosine = dot(v1, v2) / (norm(v1)*norm(v2))
-            result.append([num_of_words_in_docs[i][0], cosine]) #Cosine similarity Formula
-            #print("dot: ",dot(v1, v2),", norm v1: ",norm(v1),", norm v2: ",norm(v2))
+                v2 = v2 + word[2]  # sum of individual vectors
+            print((dot(v1, v2)))
+            print(norm(v1)*norm(v2))
+            cosine = (dot(v1, v2)) / float(norm(v1)*norm(v2))
+            print(cosine)
+            result.append([num_of_words_in_docs[i][0], cosine])  # Cosine similarity Formula
+            # print("dot: ",dot(v1, v2),", norm v1: ",norm(v1),", norm v2: ",norm(v2))
 
         return result
 
