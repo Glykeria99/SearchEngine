@@ -11,7 +11,8 @@ import queryprocessor
 
 app = Flask(__name__)
 
-
+if __name__ == '__main__':
+    app.run(use_reloader=False,debug=True)
 # os.mkdir(".\\files")
 url = "https://www.auth.gr/" # url
 links_to_crawl = queue.Queue()
@@ -69,12 +70,19 @@ def results(query):
     query_results = Q.process_query(str(query), pages, df_count, num_of_words_in_docs, indexer_copy)
     # query results contains a list of each document name and its score sorted
     form = SearchForm()
+    links = []
+    new_links = []
+    print(query_results)
+    for i in range(len(query_results)):
+        links.append(str(query_results[i][0]))
+    for i in range(len(links)):
+        if links[i].startswith('https'):
+            links[i] = links[i].replace(".txt", "")
+            new_links.append(str(links[i][:5]) + '//:' + str(links[i][5:]))
 
-    #query = queryprocessor.queryProcessor()
-    #query.calculate_cosine_sim("Greek university", self.pages, df_count, num_of_words_in_docs, indexer_copy)
 
     if form.is_submitted():
         flash(f'Results for {form.query.data}')
         return redirect(url_for('results', query = form.query.data))
-    return render_template('results.html', form=form, len = len(query_results), Results=query_results, query=query)
+    return render_template('results.html', form=form, len = len(new_links), Results=new_links, query=query)
 
