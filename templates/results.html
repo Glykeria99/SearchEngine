@@ -1,12 +1,10 @@
-<!-- This is a template for the results page, contains a
- text field to enter a query and a search button and a list of the query results as hyperlinks-->
 {% extends "Bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
 
 <head>
-	<link rel="stylesheet" href="../static/styles/searchBar.css">
+  <link rel="stylesheet" href="../static/styles/searchBar.css">
 </head>
 <body>
 <section>
@@ -39,7 +37,7 @@
 <div class="pages">
      {%for i in range(0, len)%}
 
-    <h4><a href ="{{Results[i]}}">{{Results[i]}}</a></h4>
+    <h4><a href ="{{Results[i]}}" target="_blank">{{Results[i]}}</a></h4>
 {%endfor%}
 </div>
 
