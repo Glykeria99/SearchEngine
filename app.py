@@ -50,7 +50,7 @@ print(f"Total Number of pages visited are {len(visited)} using {num_of_threads} 
 
 #  calling the indexer and getting a list the total amount of each word in the documents,
 #  a list with the number of words that each document has, and a copy of the indexer
-df_count, num_of_words_in_docs, indexer_copy = indexer.myInvertedIndexer()
+df_count, num_of_words_in_docs, indexer_copy = indexer.Indexer()
 
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
